@@ -1,7 +1,6 @@
 package dao
 
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.driver.JdbcProfile
 import slick.driver.H2Driver.api._
 import slick.lifted.{TableQuery, Rep}
@@ -17,9 +16,6 @@ trait DefaultDAO[ID, E, Z <: Table[E]] extends BaseDAO[ID, E] {
   def getId(e: E): ID
   def id(): Query[Rep[ID], ID, Seq]
   // @formatter:on
-
-  // play execution context by default
-  implicit val executionContext: ExecutionContext = defaultContext
 
   def insert(e: Seq[E]): Future[Seq[ID]] = e.nonEmpty match {
     case true => db.run((q returning id()) ++= e)

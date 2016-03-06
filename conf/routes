@@ -5,7 +5,7 @@
 # Home page
 GET           /cat/:id             @controllers.ApplicationController.byId(id:Long)
 POST          /cat                 @controllers.ApplicationController.add
-PUT           /cat/:id             @controllers.ApplicationController.update
+PUT           /cat                 @controllers.ApplicationController.update
 DELETE        /cat/:id             @controllers.ApplicationController.delete(id:Long)
 GET           /cats                @controllers.ApplicationController.cats
 
