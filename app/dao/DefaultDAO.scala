@@ -1,11 +1,11 @@
 package dao
 
 import play.api.db.slick.HasDatabaseConfigProvider
-import slick.driver.JdbcProfile
 import slick.driver.H2Driver.api._
-import slick.lifted.{TableQuery, Rep}
+import slick.driver.JdbcProfile
+import slick.lifted.{Rep, TableQuery}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 trait DefaultDAO[ID, E, Z <: Table[E]] extends BaseDAO[ID, E] {
   this: HasDatabaseConfigProvider[JdbcProfile] with HasExecutionContext =>
@@ -19,6 +19,11 @@ trait DefaultDAO[ID, E, Z <: Table[E]] extends BaseDAO[ID, E] {
 
   def insert(e: Seq[E]): Future[Seq[ID]] = e.nonEmpty match {
     case true => db.run((q returning id()) ++= e)
+    case false => Future.successful(Seq.empty[ID])
+  }
+
+  def insertForce(e: Seq[E]): Future[Unit] = e.nonEmpty match {
+    case true => db.run(q ++= e) map (_ => ())
     case false => Future.successful(Seq.empty[ID])
   }
 

@@ -10,6 +10,7 @@ trait InsertDAO[ID, E] {
   this: HasExecutionContext =>
 
   def insert(e: Seq[E]): Future[Seq[ID]]
+  def insertForce(e: Seq[E]): Future[Unit]
 
   def insert(e: E): Future[ID] =
     insert(e :: Nil) map (_.head)
