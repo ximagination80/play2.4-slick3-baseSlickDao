@@ -1,3 +1,3 @@
 package models
 
-case class Cat(name: String, color: String)
+case class Cat(id: Option[Long], color: String)

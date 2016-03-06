@@ -3,30 +3,32 @@ package dao
 import scala.concurrent.{ExecutionContext, Future}
 
 trait HasExecutionContext {
-  implicit def executor: ExecutionContext
+  implicit def executionContext: ExecutionContext
 }
 
 trait InsertDAO[ID, E] {
-  def insert(e: Seq[E]): Future[Unit]
+  this: HasExecutionContext =>
 
-  def insert(e: E): Future[Unit] =
-    insert(e :: Nil)
+  def insert(e: Seq[E]): Future[Seq[ID]]
+
+  def insert(e: E): Future[ID] =
+    insert(e :: Nil) map (_.head)
 }
 
 trait UpdateDAO[ID, E] {
-  def update(e: E): Future[Int]
+  def update(e: E): Future[Long]
 }
 
 trait DeleteDAO[ID, E] {
   this: IdExtractor[ID, E] =>
 
-  def delete(ids: Seq[ID]): Future[Int]
-  def delete(): Future[Int]
+  def delete(ids: Seq[ID]): Future[Long]
+  def delete(): Future[Long]
 
-  def delete(id: ID): Future[Int] =
+  def delete(id: ID): Future[Long] =
     delete(id :: Nil)
 
-  def deleteObject(e: E): Future[Int] =
+  def deleteObject(e: E): Future[Long] =
     delete(getId(e))
 }
 

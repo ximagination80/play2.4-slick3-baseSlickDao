@@ -20,12 +20,12 @@ class ApplicationController @Inject()(catDAO: CatDAO, messages: MessagesApi) ext
 
   val form = Form(
     mapping(
-      "name" -> nonEmptyText,
+      "id" -> optional(longNumber),
       "color" -> nonEmptyText
     )(Cat.apply)(Cat.unapply)
   )
 
-  def byId(id: String) = Action.async { implicit request =>
+  def byId(id: Long) = Action.async { implicit request =>
     catDAO.byId(id) map { e=>
       Ok(Json.toJson(e))
     }
@@ -40,13 +40,25 @@ class ApplicationController @Inject()(catDAO: CatDAO, messages: MessagesApi) ext
   def add = Action.async { implicit request =>
     form.bindFromRequest.fold(
       errorForm => Future.successful(BadRequest(Json.toJson(errorForm.errorsAsJson))),
-      data => catDAO.insert(data).map { e =>
-        Redirect(routes.ApplicationController.cats())
+      data => {
+        catDAO.insert(data).map { e =>
+          Ok(Json.toJson(e))
+        }
       }
     )
   }
 
-  def delete(id: String) = Action.async { implicit request =>
+  def update = Action.async { implicit request =>
+    form.bindFromRequest.fold(
+      errorForm => Future.successful(BadRequest(Json.toJson(errorForm.errorsAsJson))),
+      data =>
+        catDAO.update(data).map { e =>
+          Ok(Json.toJson(e))
+        }
+    )
+  }
+
+  def delete(id: Long) = Action.async { implicit request =>
     catDAO.delete(id) map { res =>
       Redirect(routes.ApplicationController.cats())
     }

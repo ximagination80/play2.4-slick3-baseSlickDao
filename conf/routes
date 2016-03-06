@@ -3,11 +3,12 @@
 # ~~~~
 
 # Home page
-GET        /cat/:id             @controllers.ApplicationController.byId(id : String)
-POST       /cat                 @controllers.ApplicationController.add
-DELETE     /cat/:id             @controllers.ApplicationController.delete(id:String)
-GET        /cats                @controllers.ApplicationController.cats
+GET           /cat/:id             @controllers.ApplicationController.byId(id:Long)
+POST          /cat                 @controllers.ApplicationController.add
+PUT           /cat/:id             @controllers.ApplicationController.update
+DELETE        /cat/:id             @controllers.ApplicationController.delete(id:Long)
+GET           /cats                @controllers.ApplicationController.cats
 
 # Map static resources from the /public folder to the /assets URL path
-GET        /assets/*file        controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file        controllers.Assets.versioned(path="/public", file: Asset)
 
