@@ -7,7 +7,7 @@ GET           /cat/:id             @controllers.ApplicationController.byId(id:Lo
 POST          /cat                 @controllers.ApplicationController.add
 PUT           /cat                 @controllers.ApplicationController.update
 DELETE        /cat/:id             @controllers.ApplicationController.delete(id:Long)
-GET           /cats                @controllers.ApplicationController.cats
+GET           /cats                @controllers.ApplicationController.list
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file        controllers.Assets.versioned(path="/public", file: Asset)
