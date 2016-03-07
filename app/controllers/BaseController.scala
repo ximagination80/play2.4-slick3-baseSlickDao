@@ -2,7 +2,7 @@ package controllers
 
 import dao.BaseDAO
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Format
 import play.api.mvc.Action.async
@@ -13,8 +13,6 @@ import scala.concurrent.Future
 trait BaseController[ID, E, V <: BaseDAO[ID, E]] extends Controller with I18nSupport with JsonSupport {
 
   def dao: V
-  def messages: MessagesApi
-  def messagesApi = messages
   def form: Form[E]
 
   implicit def formatE: Format[E]
