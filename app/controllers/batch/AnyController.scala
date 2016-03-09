@@ -1,4 +1,4 @@
-package controllers
+package controllers.batch
 
 import javax.inject.Inject
 

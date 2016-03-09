@@ -3,19 +3,19 @@
 # ~~~~
 
 # Direct controller
-GET           /cat/:id                @controllers.CatController.byId(id:Long)
-GET           /cat                    @controllers.CatController.list
-POST          /cat                    @controllers.CatController.add
-PUT           /cat                    @controllers.CatController.update
-DELETE        /cat/:id                @controllers.CatController.delete(id:Long)
+GET           /cat/:id                @controllers.direct.CatController.byId(id:Long)
+GET           /cat                    @controllers.direct.CatController.list
+POST          /cat                    @controllers.direct.CatController.add
+PUT           /cat                    @controllers.direct.CatController.update
+DELETE        /cat/:id                @controllers.direct.CatController.delete(id:Long)
 
 
 # Generic controllers
-GET           /api/:name/:id        @controllers.AnyController.byId(name:String,id:Long)
-GET           /api/:name            @controllers.AnyController.list(name:String)
-POST          /api/:name            @controllers.AnyController.add(name:String)
-PUT           /api/:name            @controllers.AnyController.update(name:String)
-DELETE        /api/:name/:id        @controllers.AnyController.delete(name:String,id:Long)
+GET           /api/:name/:id        @controllers.batch.AnyController.byId(name:String,id:Long)
+GET           /api/:name            @controllers.batch.AnyController.list(name:String)
+POST          /api/:name            @controllers.batch.AnyController.add(name:String)
+PUT           /api/:name            @controllers.batch.AnyController.update(name:String)
+DELETE        /api/:name/:id        @controllers.batch.AnyController.delete(name:String,id:Long)
 
 
 # Map static resources from the /public folder to the /assets URL path

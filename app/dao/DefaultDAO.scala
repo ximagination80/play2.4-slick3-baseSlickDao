@@ -5,16 +5,18 @@ import slick.driver.H2Driver.api._
 import slick.driver.JdbcProfile
 import slick.lifted.{Rep, TableQuery}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
 
-trait DefaultDAO[ID, E, Z <: Table[E]] extends BaseDAO[ID, E] {
-  this: HasDatabaseConfigProvider[JdbcProfile] with HasExecutionContext =>
+import play.api.libs.concurrent.Execution.defaultContext
+
+trait DefaultDAO[ID, E, Z <: Table[E]] extends BaseDAO[ID, E] with HasExecutionContext {
+  this: HasDatabaseConfigProvider[JdbcProfile] =>
 
   // @formatter:off
   def q: TableQuery[Z]
   def filterIds(e: Seq[ID]): Query[Z, Z#TableElementType, Seq]
-  def getId(e: E): ID
+  def getId(e: E): Option[ID]
   def id(): Query[Rep[ID], ID, Seq]
   // @formatter:on
 
@@ -31,7 +33,7 @@ trait DefaultDAO[ID, E, Z <: Table[E]] extends BaseDAO[ID, E] {
     if (ids.nonEmpty) db.run(filterIds(ids).delete) else successful(0)
 
   def update(e: E): Future[Int] =
-    db.run(filterIds(getId(e) :: Nil).update(e))
+    getId(e).fold(successful(0))(id => db.run(filterIds(id :: Nil).update(e)))
 
   def seq(offset: Int, limit: Int): Future[Seq[E]] =
     db.run(q.drop(offset).take(limit).result)
@@ -51,4 +53,6 @@ trait DefaultDAO[ID, E, Z <: Table[E]] extends BaseDAO[ID, E] {
   def whereSeq(f: Z => Rep[Boolean]): Future[Seq[E]] =
     db.run(q.filter(f).result)
 
+  // play execution context by default
+  implicit def executionContext: ExecutionContext = defaultContext
 }

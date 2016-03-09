@@ -4,26 +4,20 @@ import javax.inject.{Inject, Singleton}
 
 import models.Cat
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.concurrent.Execution.Implicits._
 import slick.driver.H2Driver.api._
 import slick.driver.JdbcProfile
 import slick.lifted.TableQuery
 
-import scala.concurrent.ExecutionContext
-
 @Singleton()
-class CatDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+class CatDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)
   extends HasDatabaseConfigProvider[JdbcProfile] with DefaultDAO[Long, Cat, CatDef] {
 
   val q = TableQuery[CatDef]
 
   // TODO make this better
-  def getId(e: Cat) = e.id.get
+  def getId(e: Cat) = e.id
   def id() = q.map(_.id)
   def filterIds(e: Seq[Long]) = q.filter(_.id inSet e)
-
-  // play execution context by default
-  implicit def executionContext: ExecutionContext = defaultContext
 }
 
 class CatDef(tag: Tag) extends Table[Cat](tag, "CAT") {

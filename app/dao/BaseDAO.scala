@@ -30,7 +30,7 @@ trait DeleteDAO[ID, E] {
     delete(id :: Nil)
 
   def deleteObject(e: E): Future[Int] =
-    delete(getId(e))
+    getId(e).fold(Future.successful(0))(delete)
 }
 
 trait QueryDAO[ID, E] {
@@ -54,7 +54,7 @@ trait Countable {
 }
 
 trait IdExtractor[ID, E] {
-  def getId(e: E): ID
+  def getId(e: E): Option[ID]
 }
 
 trait BaseDAO[ID, E]
