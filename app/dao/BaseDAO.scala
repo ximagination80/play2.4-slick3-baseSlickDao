@@ -9,27 +9,27 @@ trait HasExecutionContext {
 trait InsertDAO[ID, E] {
   this: HasExecutionContext =>
 
-  def insert(e: Seq[E]): Future[Seq[ID]]
+  def insertSeq(e: Seq[E]): Future[Seq[ID]]
   def insertForce(e: Seq[E]): Future[Unit]
 
   def insert(e: E): Future[ID] =
-    insert(e :: Nil) map (_.head)
+    insertSeq(e :: Nil) map (_.head)
 }
 
 trait UpdateDAO[ID, E] {
-  def update(e: E): Future[Long]
+  def update(e: E): Future[Int]
 }
 
 trait DeleteDAO[ID, E] {
   this: IdExtractor[ID, E] =>
 
-  def delete(ids: Seq[ID]): Future[Long]
-  def delete(): Future[Long]
+  def delete(ids: Seq[ID]): Future[Int]
+  def delete(): Future[Int]
 
-  def delete(id: ID): Future[Long] =
+  def delete(id: ID): Future[Int] =
     delete(id :: Nil)
 
-  def deleteObject(e: E): Future[Long] =
+  def deleteObject(e: E): Future[Int] =
     delete(getId(e))
 }
 

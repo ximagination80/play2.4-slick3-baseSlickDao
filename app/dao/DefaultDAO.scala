@@ -6,6 +6,7 @@ import slick.driver.JdbcProfile
 import slick.lifted.{Rep, TableQuery}
 
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 trait DefaultDAO[ID, E, Z <: Table[E]] extends BaseDAO[ID, E] {
   this: HasDatabaseConfigProvider[JdbcProfile] with HasExecutionContext =>
@@ -17,26 +18,20 @@ trait DefaultDAO[ID, E, Z <: Table[E]] extends BaseDAO[ID, E] {
   def id(): Query[Rep[ID], ID, Seq]
   // @formatter:on
 
-  def insert(e: Seq[E]): Future[Seq[ID]] = e.nonEmpty match {
-    case true => db.run((q returning id()) ++= e)
-    case false => Future.successful(Seq.empty[ID])
-  }
+  def insertSeq(e: Seq[E]): Future[Seq[ID]] =
+    if (e.nonEmpty) db.run((q returning id()) ++= e) else successful(Seq.empty[ID])
 
-  def insertForce(e: Seq[E]): Future[Unit] = e.nonEmpty match {
-    case true => db.run(q ++= e) map (_ => ())
-    case false => Future.successful(Seq.empty[ID])
-  }
+  def insertForce(e: Seq[E]): Future[Unit] =
+    if (e.nonEmpty) db.run(q ++= e) map (_ => ()) else successful((): Unit)
 
-  def delete(): Future[Long] =
-    db.run(q.delete) map (_.toLong)
+  def delete(): Future[Int] =
+    db.run(q.delete)
 
-  def delete(pks: Seq[ID]): Future[Long] = pks.nonEmpty match {
-    case true => db.run(filterIds(pks).delete) map (_.toLong)
-    case false => Future.successful(0)
-  }
+  def delete(ids: Seq[ID]): Future[Int] =
+    if (ids.nonEmpty) db.run(filterIds(ids).delete) else successful(0)
 
-  def update(e: E): Future[Long] =
-    db.run(filterIds(getId(e) :: Nil).update(e)) map (_.toLong)
+  def update(e: E): Future[Int] =
+    db.run(filterIds(getId(e) :: Nil).update(e))
 
   def seq(offset: Int, limit: Int): Future[Seq[E]] =
     db.run(q.drop(offset).take(limit).result)

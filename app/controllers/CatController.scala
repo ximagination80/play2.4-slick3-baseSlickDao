@@ -9,7 +9,7 @@ import play.api.data.Forms._
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 
-class ApplicationController @Inject()(val dao: CatDAO, val messagesApi: MessagesApi)
+class CatController @Inject()(val dao: CatDAO, val messagesApi: MessagesApi)
   extends BaseController[Long, Cat, CatDAO] {
 
   val formatE = Json.format[Cat]
